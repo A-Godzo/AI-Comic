@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Comic Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    form { display: flex; flex-direction: column; max-width: 400px; }
+    input, select, button { margin-bottom: 10px; padding: 8px; font-size: 1rem; }
+    .comic-strip {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .comic-strip img {
+      width: 100%;
+      border: 2px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create Your Comic</h1>
+  <form id="comic-form">
+    <input type="text" name="hero" placeholder="Main character" required />
+    <input type="text" name="setting" placeholder="Setting" required />
+    <select name="genre" required>
+      <option value="sci-fi">Sci-fi</option>
+      <option value="fantasy">Fantasy</option>
+      <option value="comedy">Comedy</option>
+    </select>
+    <button type="submit">Generate Comic</button>
+  </form>
+
+  <div class="comic-strip" id="comic-strip"></div>
+
+  <script>
+    document.getElementById('comic-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const hero = formData.get('hero');
+      const setting = formData.get('setting');
+      const genre = formData.get('genre');
+
+      const prompts = [
+        `A ${genre} hero named ${hero} arrives in ${setting}, comic book style, colorful, inking, cel shading`,
+        `${hero} encounters a challenge in ${setting}, comic panel, dramatic lighting`,
+        `${hero} reacts to the challenge, close-up, expressive face, comic book art`,
+        `${hero} triumphs and exits ${setting}, wide shot, heroic pose, comic style`
+      ];
+
+      try {
+        const response = await fetch('/generate-comic', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompts })
+        });
+
+        const data = await response.json();
+
+        const container = document.getElementById('comic-strip');
+        container.innerHTML = '';
+        data.images.forEach(src => {
+          const img = document.createElement('img');
+          img.src = src;
+          container.appendChild(img);
+        });
+      } catch (error) {
+        alert('Error generating comic panels.');
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
