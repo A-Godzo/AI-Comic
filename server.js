@@ -15,15 +15,6 @@ app.use(cors({ origin: allowedOrigin }));
 
 app.use(express.json());
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow server-to-server or curl
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error('CORS not allowed'), false);
-  }
-}));
-
-
 app.use(express.static('public'));
 
 const FALLBACK_PROMPT = "A comic panel in black and white style";
