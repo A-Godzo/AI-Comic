@@ -1,58 +1,69 @@
-
-//     //https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3.5-large -- Stable diffusion 3.5 large slow but ok
-//     //https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4 ----------- Stable diffusion 1.4 same as 1
-//     //https://api-inference.huggingface.co/models/SG161222/Realistic_Vision_V1.4 ---------- Realistic Vision 1.4 shit pics
-//     //https://api-inference.huggingface.co/models/stabilityai/sd-turbo -------------------- Stable diffusion turbo very shit images
-//     //https://api-inference.huggingface.co/models/gsdf/Counterfeit-V3.0 ------------------- Counterfeit 3.0 very promising fast but not flawless [removed]
-//     //https://api-inference.huggingface.co/models/dreamlike-art/dreamlike-photoreal-2.0 ---- 
-
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const OpenAI = require('openai');
 
 const app = express();
 const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public')); // where your index.html lives
+app.use(express.static('public'));
+
+const FALLBACK_PROMPT = "A comic panel in black and white style";
+const MAX_PANELS = 4;
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.post('/generate-comic', async (req, res) => {
-  const { prompts } = req.body;
+  let { prompts } = req.body;
   const results = [];
 
   try {
-    for (let prompt of prompts) {
-      const response = await fetch('https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.HF_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ inputs: prompt }),
+    if (!Array.isArray(prompts)) {
+      console.warn("⚠️ Prompts was not an array. Defaulting to single fallback.");
+      prompts = [FALLBACK_PROMPT];
+    }
+
+    if (prompts.length > MAX_PANELS) {
+      console.warn(`⚠️ Too many prompts (${prompts.length}). Limiting to ${MAX_PANELS}.`);
+      prompts = prompts.slice(0, MAX_PANELS);
+    }
+
+    for (const raw of prompts) {
+      const prompt = (typeof raw === 'string' && raw.trim()) ? raw.trim() : FALLBACK_PROMPT;
+      console.log("➡️ Sending prompt:", prompt);
+
+      const resp = await client.images.generate({
+        model: "gpt-image-1",   // DALL·E 3
+        prompt,
+        size: "1024x1024",
       });
 
-      console.log("Prompt:", prompt);
-      console.log("Status:", response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error text:", errorText);
-        return res.status(response.status).json({ error: errorText });
+      const b64 = resp.data?.[0]?.b64_json;
+      if (!b64) {
+        console.error("No image returned from OpenAI:", resp);
+        return res.status(502).json({ error: "No image returned from OpenAI" });
       }
 
-      const buffer = await response.buffer();
-      const base64Image = `data:image/png;base64,${buffer.toString('base64')}`;
-      results.push(base64Image);
+      results.push(`data:image/png;base64,${b64}`);
     }
 
     res.json({ images: results });
   } catch (err) {
-    console.error("Fatal server error:", err);
-    res.status(500).json({ error: 'Something went wrong on the server.' });
+  console.error("🔥 Fatal server error:", err);
+
+
+  if (err.response) {
+    res.status(err.response.status).json({
+      error: err.response.data || err.message
+    });
+  } else {
+    res.status(500).json({ error: err.message });
   }
+}
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

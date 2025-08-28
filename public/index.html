@@ -5,60 +5,398 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Comic Generator</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    form { display: flex; flex-direction: column; max-width: 400px; }
-    input, select, button { margin-bottom: 10px; padding: 8px; font-size: 1rem; }
-    .comic-strip {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .comic-strip img {
-      width: 100%;
-      border: 2px solid #333;
-    }
+    body {
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    background: url(comic-background.jpg) no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s;
+  }
+
+  h1 {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+  }
+
+  h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    justify-content: center;
+    transition: opacity 0.3s;
+  }
+
+  .options button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: 2px solid #333;
+    background-color: #fff;
+    transition: all 0.2s;
+    border-radius: 5px;
+  }
+
+  .options button.selected {
+    background-color: #333;
+    color: #fff;
+  }
+
+  #generate-comic {
+    margin-top: 20px;
+    padding: 12px 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.2s;
+  }
+
+  #generate-comic:hover {
+    background-color: #0056b3;
+  }
+
+  #loading {
+    display: none;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #555;
+  }
+
+  .comic-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 512px);
+  gap: 15px;
+  margin-top: 20px;
+  justify-content: center;       
+}
+
+  .comic-strip img {
+  width: 512px;
+  height: 512px;
+  object-fit: cover;             
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+  .comic-strip img:hover {
+    transform: scale(1.02);
+}
+
+#disclosure-btn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid #000000;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1001;
+  transition: background-color 0.3s ease;
+}
+#disclosure-btn:hover {
+  background-color: #555;
+}
+#disclosure-btn img {
+  width: 24px;
+  height: 24px;
+  filter: invert(1); /* makes white icon visible on dark bg */
+}
+
+#sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 100%;
+  background-color: #dbd5d5;
+  color: rgb(0, 0, 0);
+  box-shadow: -4px 0 10px rgba(0,0,0,0.4);
+  transition: transform 0.8s ease;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px;
+
+  transform: translateX(100%); /* fully hidden */
+}
+#sidebar.active {
+  transform: translateX(0); /* slide in */
+}
+.sidebar-content {
+  margin-top: 60px; 
+}
+
+
+@media (max-width: 560px) {
+  .comic-strip {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .comic-strip img {
+    width: 100%;
+    height: 280px;
+  }
+}
+
   </style>
 </head>
 <body>
+
   <h1>Create Your Comic</h1>
-  <form id="comic-form">
-    <input type="text" name="hero" placeholder="Main character" required />
-    <input type="text" name="setting" placeholder="Setting" required />
-    <select name="genre" required>
-      <option value="sci-fi">Sci-fi</option>
-      <option value="fantasy">Fantasy</option>
-      <option value="comedy">Comedy</option>
-    </select>
-    <button type="submit">Generate Comic</button>
-  </form>
 
-  <div class="comic-strip" id="comic-strip"></div>
+  <div id="controls">
+    <h2>Select Genre</h2>
+    <div id="genre-options" class="options">
+      <button data-genre="sci-fi">Sci-fi</button>
+      <button data-genre="western">Western</button>
+      <button data-genre="superhero">Superhero</button>
+      <button data-genre="spy">Spy</button>
+    </div>
 
+    <h2>Select Plot</h2>
+    <div id="plot-options" class="options">
+      <button data-plot="triumphant">Triumphant</button>
+      <button data-plot="funny">Funny</button>
+      <button data-plot="dramatic">Dramatic</button>
+      <button data-plot="action">Action</button>
+    </div>
+
+    <button id="generate-comic">Generate Comic</button>
+  </div>
+
+  <div id="loading">Generating comic... ⏳</div>
+  <div id="comic-strip" class="comic-strip"></div>
+
+    <!-- Disclosure Button -->
+<button id="disclosure-btn">
+  <img src="https://img.icons8.com/ios-filled/50/ffffff/info.png" alt="Info">
+</button>
+
+<!-- Sidebar -->
+<div id="sidebar">
+  <div class="sidebar-content">
+    <h2>About this project</h2>
+    <p>BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA BLA</p>
+  </div>
+</div>
+
+<!-------------------------------------------------------- // Frontend Javascript// --------------------------------------------------------->
   <script>
-    document.getElementById('comic-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+  let selectedGenre = null;
+  let selectedPlot = null;
+  const FALLBACK_PROMPT = "A comic panel in black and white style";
 
-      const formData = new FormData(e.target);
-      const hero = formData.get('hero');
-      const setting = formData.get('setting');
-      const genre = formData.get('genre');
+    const PROMPT_TEMPLATES = {
+      "sci-fi": {
+        "triumphant": [
 
-      const prompts = [
-        `A ${genre} hero named ${hero} arrives in ${setting}, comic book style, colorful, inking, cel shading`,
-        `${hero} encounters a challenge in ${setting}, comic panel, dramatic lighting`,
-        `${hero} reacts to the challenge, close-up, expressive face, comic book art`,
-        `${hero} triumphs and exits ${setting}, wide shot, heroic pose, comic style`
-      ];
+          "Comic panel, sci-fi setting. Ray, a rugged space adventurer in a weathered red leather coat, stubbled jaw, and sharp determined eyes, stands tall in the middle of a crowded futuristic space bar. He strikes a triumphant pose, illuminated by neon lights and starship windows. 1990s Marvel/DC comic style, bold inking, cel shading, dynamic perspective, halftone dots.",
+
+          "Comic panel, sci-fi setting. Ray, the confident space adventurer in a worn red leather coat, smiles proudly as the lively crowd around him cheers, raising their glasses in celebration. Neon lights glow across the scene. 1990s Marvel/DC comic style, bold inking, cel shading, dramatic lighting, halftone dots.",
+
+          "Comic panel, sci-fi setting. Ray, rugged and triumphant, leans on the space bar counter, pointing at the bartender with a sly grin as he orders a drink. The room is alive with futuristic details—glowing signs, alien patrons, and vibrant neon accents. 1990s Marvel/DC comic style, expressive face, cel shading, halftone dots.",
+
+          "Comic panel, sci-fi setting. Ray, space adventurer in his iconic red leather coat, exits the bar with a confident smile. The doorway opens to reveal a sprawling futuristic city with glowing skyscrapers and starships soaring above. Wide shot, 1990s Marvel/DC comic style, bold inking, dynamic pose, halftone dots."
+        
+        ],
+
+        "funny": [
+
+          "Comic panel, sci-fi setting. Ray, a rugged space adventurer in a worn red leather coat with a mischievous grin, accidentally spills a glowing drink onto a floating robot waiter. The robot flails wildly as colorful drinks fly through the air. Exaggerated comic expressions, 1990s Marvel/DC comic style, bold inking, cel shading, bright neon colors, dynamic perspective, halftone dots.",
+
+          "Comic panel, sci-fi setting. Ray, wide-eyed and panicking, watches as the robot spins uncontrollably, sending drinks and utensils flying across the diner. Alien patrons in the background laugh and cheer. 1990s Marvel/DC comic style, exaggerated motion lines, cel shading, halftone dots.",
+
+          "Comic panel, sci-fi setting. Close-up of Ray sweating nervously while apologizing to the floating robot, which looks annoyed with cartoonish eyes. Comedic visual gags in the background, exaggerated expressions. 1990s Marvel/DC comic style, bold inking, expressive faces, halftone dots.",
+
+          "Comic panel, sci-fi setting. Ray, panicked but determined, slips on a spilled drink while escaping the chaos, landing heroically with a grin. Alien patrons still laughing around him, chaotic yet humorous scene. Wide shot, 1990s Marvel/DC comic style, bold inking, cel shading, bright neon colors, halftone dots."
+
+        ],
+
+        "action": [
+            
+            "Comic panel, sci-fi setting. Ray, a rugged space adventurer in a worn red leather coat with a stubbled jaw and determined eyes, bursts dramatically into a crowded Space Bar. 1990s Marvel/DC comic style, bold inking, cel shading, dynamic perspective, bright neon colors, dramatic action lines.",
+
+            "Comic panel, sci-fi setting. Ray dodges blaster fire from a group of alien thugs in the Space Bar. Close-up of his intense face showing focus and determination, lasers flying past. 1990s Marvel/DC comic style, bold inking, expressive eyes, cel shading, halftone dots, dynamic perspective.",
+
+            "Comic panel, sci-fi setting. Ray uses a futuristic gadget to disarm an alien thug. Explosive action, dramatic lighting highlighting his movements, scattered debris around. 1990s Marvel/DC comic style, bold inking, cel shading, bright neon colors, dynamic perspective, halftone dots.",
+
+            "Comic panel, sci-fi setting. Ray stands victorious over the defeated alien thugs in the Space Bar. Patrons cheer wildly, neon lights reflecting off the scene. Wide heroic pose, 1990s Marvel/DC comic style, bold inking, cel shading, dynamic perspective, bright saturated colors, halftone dots."
+        ],
+      },
+     
+      "western": {
+
+        "triumphant": [
+      
+        "Comic panel, western frontier town. Flint Westwood, a rugged gunslinger with a weathered duster coat, wide-brimmed hat casting a shadow over his eyes, cigar in mouth, stands in the dusty main street. Classic 1960s spaghetti western comic style, bold inking, cel shading, dramatic perspective, expressive face, bright sun, long shadows, halftone dots.",
+
+        "Comic panel, western frontier town. Flint Westwood faces off against a group of rowdy outlaws outside the saloon. Tense standoff, exaggerated comic tension lines, classic spaghetti western comic style, bold inking, dynamic perspective, cel shading, expressive facial reactions.",
+
+        "Comic panel, western frontier town. Close-up of Flint’s hand hovering over his revolver, dust swirling, intense eyes visible under the hat brim, silent suspense. Comic exaggeration of shadows and motion, classic western comic style, halftone dots, bold inking.",
+
+       "Comic panel, western frontier town. Aftermath of the standoff: outlaws fleeing, townsfolk cheering, Flint calmly tipping his hat and walking away, heroic and mysterious wide shot. Classic spaghetti western comic style, bright sun, long shadows, expressive faces, halftone dots."
+  ],
+
+        "funny": [
+          
+          "Comic panel, western town square. Flint Westwood, the rugged gunslinger, slips on a banana peel, exaggerated comic expressions, classic western comic style, cel shading, bold inking, halftone dots, dynamic perspective.",
+
+          "Comic panel, western town square. Flint Westwood lying on his back after slipping, revolver accidentally firing, exaggerated motion lines, surprised comic expression, classic western comic style, cel shading, bold inking, halftone dots.",
+
+          "Comic panel, western town square. A man with a worn beige cowboy hat has his hat blown off by a stray bullet, exaggerated comic reaction, hat flying through the air, classic western comic style, bright saturated colors, expressive faces, bold inking, halftone dots.",
+
+          "Comic panel, western town square. Wide shot, Flint Westwood on his back looking embarrassed, crowd of townsfolk shocked and laughing, man with hat on the ground, classic western comic style, cel shading, bold inking, dynamic perspective, expressive faces, halftone dots."
+  ],
+
+        "action": [
+          
+          "Comic panel, dusty western town street. Flint Westwood, the rugged cowboy, enters with showdown tension, classic spaghetti western comic style, bold inking, cel shading, dramatic perspective, dynamic shadows, expressive face, 1990s comic style.",
+
+          "Comic panel, close-up. Flint Westwood drawing his revolver with a determined look, intense eyes, motion lines emphasizing speed, classic western comic style, dynamic action, bold outlines, halftone shading, dramatic shadows.",
+
+          "Comic panel, western street action. Flint Westwood firing his revolver, dust and debris flying around, motion blur, explosive action, dramatic angles, classic spaghetti western comic style, exaggerated movements, 1990s Marvel/DC comic influence, bold inking, cel shading, halftone dots.",
+
+          "Comic panel, wide shot. Flint Westwood standing victorious over defeated outlaws, townsfolk cheering, heroic pose, classic spaghetti western comic style, bold inking, cel shading, bright saturated colors, dynamic perspective, halftone dots."
+  
+        ],
+
+
+      },
+
+
+      "superhero": {
+
+        "triumphant": [
+
+        "Comic panel, Uberman, a heroic figure like Superman but with a bold 'U' emblem on his chest, strong jawline, flowing cape, landing gracefully in the city square, citizens looking up in awe, classic 1990s superhero comic style, bold inking, cel shading, bright saturated colors, dynamic perspective, expressive faces, halftone dots.",
+    
+        "Comic panel, Uberman standing proudly as a well-dressed man hands him the key to the city, wide shot of the crowd cheering and waving banners in the background, heroic and triumphant atmosphere, classic 1990s superhero comic style, bold inking, cel shading, bright saturated colors, dynamic perspective, expressive faces, halftone dots.",
+    
+        "Comic panel, Close-up of Uberman smiling confidently, receiving the key, light reflecting off his cape and chest emblem, crowd's faces visible in soft focus behind him, dramatic superhero comic lighting, classic 1990s style, bold inking, expressive eyes, cel shading, halftone dots.",
+  
+        "Comic panel, Uberman soaring into the sky over the city after receiving the key, crowd cheering from below, dynamic perspective showing cityscape and sky, triumphant pose with flowing cape, classic 1990s superhero comic style, bold inking, cel shading, bright saturated colors, halftone dots, dramatic action lines."
+
+        ],
+
+        "funny": [
+
+        "Dash, a superhero in a red and yellow speed suit with a lightning emblem, running at top speed through a bustling city street, eyes widening as he spots a dark tunnel ahead, exaggerated motion lines, classic 1990s superhero comic style, bold inking, cel shading, bright saturated colors, dynamic perspective, halftone dots.",
+    
+        "Dash accelerating towards the tunnel with extreme speed, cityscape blurring around him, citizens in the background pointing and looking amazed, dynamic motion lines, comic exaggeration, bold inking, cel shading, bright colors, halftone dots.",
+
+        "Dash smashing into the tunnel, which is revealed to be only a painted drawing on a wall, comical crash with dust clouds and exaggerated motion lines, facial expression of shock, classic 1990s superhero comic style, bold inking, cel shading, dynamic perspective, halftone dots.",
+
+        "Dash lying on the ground in a comically flattened pose, stars circling his head, Wile E. Coyote peeking from behind a corner with a puzzled expression, classic 1990s cartoon-style exaggeration, bold inking, cel shading, bright colors, expressive faces, halftone dots."
+  
+
+        ],
+
+
+        "action": [
+          
+        "A superhero comic panel, in 1990s DC comic style. Main character: Batman, tall and muscular, black cape and cowl, stoic expression, utility belt visible. Setting: Gotham City alley at night, neon signs flickering, rain-soaked streets. Action: Batman drops from a rooftop onto the alley, ready to confront Joker’s goons, dramatic pose with cape flowing. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+
+        "A superhero comic panel, in 1990s DC comic style. Main character: Batman, fists clenched, eyes focused, cape swirling. Setting: Dark alley with trash cans and scattered crates. Action: Batman punches one thug mid-air while dodging a second thug’s swing, motion lines emphasizing speed and impact. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+
+        "A superhero comic panel, in 1990s DC comic style. Main character: Batman, crouched, observing the scene, ready to strike. Setting: Alley widening into a street with Joker laughing from the shadows atop a car. Action: Batman kicks a thug into a wall, debris flying, Joker taunting from above, tense dynamic composition. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+
+        "A superhero comic panel, in 1990s DC comic style. Main character: Batman, standing tall, cape wrapped around him, stoic and victorious. Setting: Alley cleared of goons, moonlight casting dramatic shadows. Action: Batman glares at the fleeing goons, one held in a chokehold by his cape, dramatic wide shot, dynamic perspective. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows."
+  
+
+        ],
+
+      },
+
+      "spy": {
+
+        "triumphant": [
+          
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop at night in a neon-lit city. Action: Agent Raven lands gracefully after leaping from a helicopter, ready for action. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+    
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop edge with helicopter lights reflecting off glass skyscrapers. Action: Agent Raven uses a high-tech grappling hook to swing across buildings. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+    
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Secret villain's rooftop lab, glowing with red warning lights. Action: Agent Raven confronts the henchmen, elegantly disarming two guards simultaneously. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+    
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop as the sun rises over the city skyline. Action: Agent Raven stands triumphant, hands on hips, as the captured villain is escorted away by authorities. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows."
+  
+        ],
+        
+        "funny": [
+        
+
+      
+        ],
+        "action": [
+
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Narrow alleyway in a rain-soaked city at night. Action: Agent Raven vaults over a parked car while dodging gunfire from shadowy henchmen. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+    
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftops above the city with neon signs reflecting in puddles. Action: Agent Raven swings across buildings using a grappling hook while henchmen fire across the rooftops. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+    
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Villain's secret lab filled with glowing red consoles. Action: Agent Raven kicks a henchman into a stack of crates while dodging laser alarms. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+    
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop edge with the city skyline in the background. Action: Agent Raven leaps away as the villain's helicopter explodes behind him, landing safely on the street below. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows."
+  
+
+        ],
+      }
+    };
+
+   function setupOptionButtons(containerId, selectedVar) {
+      document.querySelectorAll(`#${containerId} button`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (selectedVar === "genre") selectedGenre = btn.dataset.genre;
+          if (selectedVar === "plot") selectedPlot = btn.dataset.plot;
+
+          // Highlight selected
+          document.querySelectorAll(`#${containerId} button`).forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+        });
+      });
+    }
+
+    setupOptionButtons("genre-options", "genre");
+    setupOptionButtons("plot-options", "plot");
+
+    document.getElementById('generate-comic').addEventListener('click', async () => {
+      if (!selectedGenre || !selectedPlot) {
+        alert("Please select both a genre and a plot style!");
+        return;
+      }
+
+      const promptsTemplate = PROMPT_TEMPLATES[selectedGenre]?.[selectedPlot] || [FALLBACK_PROMPT];
+      const prompts = promptsTemplate;
+
+      const loading = document.getElementById("loading");
+      const controls = document.getElementById("controls");
+      loading.style.display = "block";
 
       try {
         const response = await fetch('/generate-comic', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompts })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompts })
         });
 
         const data = await response.json();
+        loading.style.display = "none";
+
+        controls.style.display = "none";
 
         const container = document.getElementById('comic-strip');
         container.innerHTML = '';
@@ -68,10 +406,28 @@
           container.appendChild(img);
         });
       } catch (error) {
-        alert('Error generating comic panels.');
+        loading.style.display = "none";
+        alert("Error generating comic panels.");
         console.error(error);
       }
     });
+
+const disclosureBtn = document.getElementById("disclosure-btn");
+const sidebar = document.getElementById("sidebar");
+
+disclosureBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("active");
+});
+
+// Collapse if not hovering over sidebar
+sidebar.addEventListener("mouseleave", () => {
+  sidebar.classList.remove("active");
+});
   </script>
+
+  
+
+
+
 </body>
 </html>
