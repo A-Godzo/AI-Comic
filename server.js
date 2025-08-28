@@ -15,6 +15,8 @@ app.get('/', (req, res) => {
 
 app.use(express.json());
 
+app.use(express.static(__dirname));
+
 const FALLBACK_PROMPT = "A comic panel in black and white style";
 const MAX_PANELS = 4;
 
