@@ -6,18 +6,14 @@ const OpenAI = require('openai');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// const allowedOrigins = [
-//   'https://a-godzo.github.io/AI-Comic/',               // GitHub Pages root   https://<your-username>.github.io
-//   'http://localhost:3000'                         // local dev (optional)
-// ];
-
-
 const allowedOrigin = "https://a-godzo.github.io";
 app.use(cors({ origin: allowedOrigin }));
 
-app.use(express.json());
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
-app.use(express.static('public'));
+app.use(express.json());
 
 const FALLBACK_PROMPT = "A comic panel in black and white style";
 const MAX_PANELS = 4;
