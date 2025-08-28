@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const allowedOrigins = [
-  'https://YOUR_USERNAME.github.io',               // GitHub Pages root   https://<your-username>.github.io
+  'https://a-godzo.github.io/AI-Comic/',               // GitHub Pages root   https://<your-username>.github.io
   'http://localhost:3000'                         // local dev (optional)
 ];
 

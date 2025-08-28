@@ -387,11 +387,17 @@
       loading.style.display = "block";
 
       try {
-        const response = await fetch('/generate-comic', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompts })
+
+        const BACKEND_URL = 'https://your-backend.onrender.com/generate-comic';
+
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompts })
+        
         });
+
+        
 
         const data = await response.json();
         loading.style.display = "none";
