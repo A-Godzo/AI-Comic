@@ -398,8 +398,6 @@
       const controls = document.getElementById("controls");
       loading.style.display = "block";
 
-      async function generateComic() {
-
       try {
 
         const BACKEND_URL = 'https://ai-comic-backend-2l4x.onrender.com/generate-comic';
@@ -410,70 +408,6 @@
           body: JSON.stringify({ prompts })
         
         });
-
-        if (!response.ok) {
-      let message = "Unexpected error occurred";
-
-      if (response.status === 400) {
-        message = "Billing threshold has been hit.";
-      } else if (response.status >= 500 && response.status < 600) {
-        message = "There was an API server problem. Please try again later.";
-      }
-
-      showError(message);
-      return;
-    }
-
-    const data = await response.json();
-    // continue normal flow
-    console.log("Comic generated:", data);
-
-  } catch (err) {
-    console.error("Frontend error:", err);
-    showError("Unexpected error occurred");
-  }
-}
-
-function showError(message) {
-  // Hide the options UI
-  document.getElementById("options").style.display = "none";
-
-  // Create error div
-  const errorDiv = document.createElement("div");
-  errorDiv.id = "error-message";
-  errorDiv.style.position = "fixed";
-  errorDiv.style.top = "0";
-  errorDiv.style.left = "0";
-  errorDiv.style.width = "100%";
-  errorDiv.style.height = "100%";
-  errorDiv.style.background = "rgba(0, 0, 0, 0.85)";
-  errorDiv.style.display = "flex";
-  errorDiv.style.flexDirection = "column";
-  errorDiv.style.justifyContent = "center";
-  errorDiv.style.alignItems = "center";
-  errorDiv.style.color = "white";
-  errorDiv.style.fontSize = "1.2rem";
-  errorDiv.style.zIndex = "9999";
-
-  errorDiv.innerHTML = `
-    <p>${message}</p>
-    <button id="refresh-btn" style="
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    ">Refresh</button>
-  `;
-
-  document.body.appendChild(errorDiv);
-
-  // Refresh button
-  document.getElementById("refresh-btn").onclick = () => {
-    location.reload();
-  };
-}
 
         
 
@@ -491,18 +425,18 @@ function showError(message) {
         });
 
 
-      // } catch (error) {
-      //   loading.style.display = "none";
-      //   controls.style.display = "none";
+      } catch (error) {
+        loading.style.display = "none";
+        controls.style.display = "none";
 
-      //   document.getElementById("error-message").innerText = 
-      //   error.message.includes("Billing") 
-      //     ? "⚠️ Billing threshold has been hit. Please update billing." 
-      //     : "❌ Error generating comic panels.";
-      //   document.getElementById("error-screen").style.display = "block";
+        document.getElementById("error-message").innerText = 
+        error.message.includes("Billing") 
+          ? "⚠️ Billing threshold has been hit. Please update billing." 
+          : "❌ Error generating comic panels.";
+        document.getElementById("error-screen").style.display = "block";
         
-      //   console.error(error);
-      // }
+        console.error(error);
+    }
 
 
     });
@@ -519,10 +453,5 @@ sidebar.addEventListener("mouseleave", () => {
   sidebar.classList.remove("active");
 });
   </script>
-
-  
-
-
-
 </body>
 </html>
