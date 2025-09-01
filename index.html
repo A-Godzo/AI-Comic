@@ -246,7 +246,7 @@
   </div>
 
 <div id="refresh-comic-container" style="display: none; text-align: center;">
-  <button class="refresh-btn">Create new comic</button>
+  <button class="refresh-comic-btn">Create new comic</button>
 </div>
 
 
@@ -443,10 +443,13 @@ setupOptionButtons("genre-options", "genre");
 setupOptionButtons("plot-options", "plot");
 
 document.getElementById('generate-comic').addEventListener('click', async () => {
+
   if (!selectedGenre || !selectedPlot) {
     alert("Please select both a genre and a plot style!");
     return;
   }
+
+  console.log("Genre:", selectedGenre, "Plot:", selectedPlot);
 
   const promptsTemplate = PROMPT_TEMPLATES[selectedGenre]?.[selectedPlot] || [FALLBACK_PROMPT];
   const prompts = promptsTemplate;
@@ -469,7 +472,6 @@ document.getElementById('generate-comic').addEventListener('click', async () => 
   }, 500);
 
   try {
-    // Send all prompts in a single request
     const response = await fetch('https://ai-comic-backend-2l4x.onrender.com/generate-comic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
