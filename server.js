@@ -45,7 +45,7 @@ app.post('/generate-comic', async (req, res) => {
       const resp = await client.images.generate({
         model: "gpt-image-1",   // DALL·E 3
         prompt,
-        size: "1024x1024",
+        size: "512x512",
       });
 
       const b64 = resp.data?.[0]?.b64_json;
