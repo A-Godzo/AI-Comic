@@ -28,16 +28,46 @@
     margin-bottom: 10px;
   }
 
-  .options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
-    justify-content: center;
-    transition: opacity 0.3s;
-  }
+#controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+
+  .option-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+
+.option-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-weight: bold;
+}
+
+.option-group span {
+  color: white;
+  text-shadow: -1.2px -1.2px 0 #000, 1.2px -1.2px 0 #000, -1.2px 1.2px 0 #000, 1.2px 1.2px 0 #000;
+  font-size: 1.4rem;
+  min-width: 80px; 
+  text-align: right;
+}
+
+ .options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
   .options button {
+    height: 2.7rem;
+    width: 7rem;
     padding: 10px 15px;
     font-size: 1rem;
     cursor: pointer;
@@ -53,20 +83,23 @@
   }
 
   #generate-comic {
-    margin-top: 20px;
-    padding: 12px 25px;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 5px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    transition: background-color 0.2s;
-  }
+  padding: 18px 30px;
+  height: 6.3rem;
+  font-size: 1.4rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #ff4d4d;
+  color: white;
+  cursor: pointer;
+  align-self: center;
+  transition: transform 0.2s, background-color 0.2s;
+}
 
-  #generate-comic:hover {
-    background-color: #0056b3;
-  }
+#generate-comic:hover {
+  background-color: #e60000;
+  transform: scale(1.05);
+}
+
 
   #loading {
     display: none;
@@ -161,24 +194,31 @@
   <h1>Create Your Comic</h1>
 
   <div id="controls">
-    <h2>Select Genre</h2>
-    <div id="genre-options" class="options">
-      <button data-genre="sci-fi">Sci-fi</button>
-      <button data-genre="western">Western</button>
-      <button data-genre="superhero">Superhero</button>
-      <button data-genre="spy">Spy</button>
+  <div class="option-groups">
+    <div class="option-group">
+      <span>Genre:</span>
+      <div id="genre-options" class="options">
+        <button data-genre="sci-fi">Sci-fi</button>
+        <button data-genre="western">Western</button>
+        <button data-genre="superhero">Superhero</button>
+        <button data-genre="spy">Spy</button>
+      </div>
     </div>
 
-    <h2>Select Plot</h2>
-    <div id="plot-options" class="options">
-      <button data-plot="triumphant">Triumphant</button>
-      <button data-plot="funny">Funny</button>
-      <button data-plot="dramatic">Dramatic</button>
-      <button data-plot="action">Action</button>
+    <div class="option-group">
+      <span>Plot:</span>
+      <div id="plot-options" class="options">
+        <button data-plot="triumphant">Triumphant</button>
+        <button data-plot="funny">Funny</button>
+        <button data-plot="dramatic">Dramatic</button>
+        <button data-plot="action">Action</button>
+      </div>
     </div>
-
-    <button id="generate-comic">Generate Comic</button>
   </div>
+
+  <button id="generate-comic">Generate Comic</button>
+</div>
+      
 
   <div id="loading">Generating comic... ⏳</div>
   <div id="comic-strip" class="comic-strip"></div>
