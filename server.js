@@ -23,7 +23,7 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.post('/generate-comic', async (req, res) => {
   let { prompts } = req.body;
-  // const results = [];
+  const results = [];
 
   try {
 
