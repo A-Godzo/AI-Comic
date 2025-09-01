@@ -112,18 +112,15 @@
 
   .comic-strip {
   display: grid;
-  grid-template-columns: repeat(auto-fit, 512px);
+  grid-template-columns: repeat(2, 512px);
   gap: 15px;
-  margin-top: 20px;
-  justify-content: center;       
+  margin-top: 20px;      
 }
 
-  .comic-strip img {
-  width: 512px;
-  height: 512px;
-  object-fit: cover;             
-  border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  .comic-strip img {  
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
   .comic-strip img:hover {
@@ -417,7 +414,6 @@
           if (selectedVar === "genre") selectedGenre = btn.dataset.genre;
           if (selectedVar === "plot") selectedPlot = btn.dataset.plot;
 
-          // Highlight selected
           document.querySelectorAll(`#${containerId} button`).forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
         });
@@ -490,7 +486,6 @@ disclosureBtn.addEventListener("click", () => {
   sidebar.classList.toggle("active");
 });
 
-// Collapse if not hovering over sidebar
 sidebar.addEventListener("mouseleave", () => {
   sidebar.classList.remove("active");
 });
