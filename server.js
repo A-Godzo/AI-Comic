@@ -14,7 +14,6 @@ app.get('/', (req, res) => {
 });
 
 app.use(express.json());
-
 app.use(express.static(__dirname));
 
 const FALLBACK_PROMPT = "A comic panel in black and white style";
@@ -24,7 +23,7 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.post('/generate-comic', async (req, res) => {
   let { prompts } = req.body;
-  const results = [];
+  // const results = [];
 
   try {
 
@@ -38,25 +37,24 @@ app.post('/generate-comic', async (req, res) => {
       prompts = prompts.slice(0, MAX_PANELS);
     }
 
-    for (const raw of prompts) {
-      const prompt = (typeof raw === 'string' && raw.trim()) ? raw.trim() : FALLBACK_PROMPT;
-      console.log("Sending prompt:", prompt);
+
+    const imagePromises = prompts.map(async (raw) => {
+     const prompt = (typeof raw === 'string' && raw.trim()) ? raw.trim() : FALLBACK_PROMPT;
+      console.log("➡️ Sending prompt:", prompt);
 
       const resp = await client.images.generate({
-        model: "gpt-image-1",   // DALL·E 3
+        model: "gpt-image-1",
         prompt,
         size: "1024x1024",
       });
 
       const b64 = resp.data?.[0]?.b64_json;
-      if (!b64) {
-        console.error("No image returned from OpenAI:", resp);
-        return res.status(502).json({ error: "No image returned from OpenAI" });
-      }
+      if (!b64) throw new Error("No image returned from OpenAI");
 
-      results.push(`data:image/png;base64,${b64}`);
-    }
+      return `data:image/png;base64,${b64}`;
+    });
 
+    const results = await Promise.all(imagePromises);
     res.json({ images: results });
 
 
