@@ -442,7 +442,9 @@
 setupOptionButtons("genre-options", "genre");
 setupOptionButtons("plot-options", "plot");
 
-document.getElementById('generate-comic').addEventListener('click', async () => {
+
+
+document.getElementById('generate-comic').addEventListener('click', async () => { 
 
   if (!selectedGenre || !selectedPlot) {
     alert("Please select both a genre and a plot style!");
@@ -451,8 +453,8 @@ document.getElementById('generate-comic').addEventListener('click', async () => 
 
   console.log("Genre:", selectedGenre, "Plot:", selectedPlot);
 
-  const promptsTemplate = PROMPT_TEMPLATES[selectedGenre]?.[selectedPlot] || [FALLBACK_PROMPT];
-  const prompts = promptsTemplate;
+  // const promptsTemplate = PROMPT_TEMPLATES[selectedGenre]?.[selectedPlot] || [FALLBACK_PROMPT];
+  const prompts = PROMPT_TEMPLATES[selectedGenre]?.[selectedPlot] || [FALLBACK_PROMPT];
 
   const loading = document.getElementById("loading");
   const controls = document.getElementById("controls");
@@ -472,6 +474,8 @@ document.getElementById('generate-comic').addEventListener('click', async () => 
   }, 500);
 
   try {
+
+    console.log("Using prompts:", prompts);
     const response = await fetch('https://ai-comic-backend-2l4x.onrender.com/generate-comic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -491,7 +495,7 @@ document.getElementById('generate-comic').addEventListener('click', async () => 
       const img = document.createElement('img');
       img.src = src;
       container.appendChild(img);
-    });
+    }); 
 
     loading.style.display = "none";
     controls.style.display = "none";
