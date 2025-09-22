@@ -192,6 +192,25 @@
   margin-top: 60px; 
 }
 
+#refresh-comic-container{
+
+  display: none; 
+  text-align: center;
+}
+
+#refresh-comic-btn{
+
+  margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    
+}
+
 
 @media (max-width: 560px) {
   .comic-strip {
@@ -245,18 +264,18 @@
     <button onclick="window.location.reload()" class="refresh-btn">Refresh</button>
   </div>
 
-<!-- <div id="refresh-comic-container" style="display: none; text-align: center;">
+<div id="refresh-comic-container">
   <button class="refresh-comic-btn">Create new comic</button>
-</div> -->
+</div>
 
 
 <button id="disclosure-btn">
   <img src="https://img.icons8.com/ios-filled/50/ffffff/info.png" alt="Info">
 </button>
 
-<div id="loading-screen" style="display:none;">
+<!-- <div id="loading-screen" style="display:none;">
   <p id="timer">Time: 0s</p>
-</div>
+</div> -->
 
 <div id="sidebar">
   <div class="sidebar-content">
@@ -503,9 +522,9 @@ document.getElementById('generate-comic').addEventListener('click', async () => 
 
     loading.style.display = "none";
     controls.style.display = "none";
-    // document.getElementById("refresh-comic-container").style.display = "block";
+    document.getElementById("refresh-comic-container").style.display = "block";
 
-    // document.getElementById("refresh-comic-btn").onclick = () => location.reload();
+    document.getElementById("refresh-comic-btn").onclick = () => location.reload();
 
   } catch (error) {
     loading.style.display = "none";
