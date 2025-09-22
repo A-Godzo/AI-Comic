@@ -198,9 +198,9 @@
   text-align: center;
 }
 
-#refresh-comic-btn{
+.refresh-comic-btn{
 
-  margin-top: 20px;
+    margin-top: 20px;
     padding: 10px 20px;
     font-size: 1rem;
     cursor: pointer;
@@ -265,7 +265,7 @@
   </div>
 
 <div id="refresh-comic-container">
-  <button class="refresh-comic-btn">Create new comic</button>
+  <button onclick="window.location.reload()" class="refresh-comic-btn">Create new comic</button>
 </div>
 
 
@@ -274,7 +274,7 @@
 </button>
 
 <div id="loading-screen" style="display:none; margin-top:20px; font-weight:bold; color:#555;">
-  <span>Generating comic... ⏳</span>
+  <span></span> 
 </div>
 
 
@@ -417,13 +417,13 @@
 
         "triumphant": [
           
-        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop at night in a neon-lit city. Action: Agent Raven lands gracefully after leaping from a helicopter, ready for action. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Bames Jond, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop at night in a neon-lit city. Action: Agent Raven lands gracefully after leaping from a helicopter, ready for action. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
     
-        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop edge with helicopter lights reflecting off glass skyscrapers. Action: Agent Raven uses a high-tech grappling hook to swing across buildings. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Bames Jond, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop edge with helicopter lights reflecting off glass skyscrapers. Action: Agent Raven uses a high-tech grappling hook to swing across buildings. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
     
-        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Secret villain's rooftop lab, glowing with red warning lights. Action: Agent Raven confronts the henchmen, elegantly disarming two guards simultaneously. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Bames Jond, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Secret villain's rooftop lab, glowing with red warning lights. Action: Agent Raven confronts the henchmen, elegantly disarming two guards simultaneously. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows.",
     
-        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Agent Raven, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop as the sun rises over the city skyline. Action: Agent Raven stands triumphant, hands on hips, as the captured villain is escorted away by authorities. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows."
+        "A spy comic panel, in 1980s James Bond-inspired comic style. Main character: Bames Jond, a sleek, agile spy in a black tactical suit with mirrored sunglasses. Setting: Rooftop as the sun rises over the city skyline. Action: Agent Raven stands triumphant, hands on hips, as the captured villain is escorted away by authorities. Style: bold black outlines, flat colors, dynamic angles, cinematic shadows."
   
         ],
         
@@ -487,6 +487,7 @@ document.getElementById('generate-comic').addEventListener('click', async () => 
   const loading = document.getElementById("loading-screen");
   const controls = document.getElementById("controls");
   const container = document.getElementById('comic-strip');
+  const refresh = document.getElementById("refresh-comic-container");
   const startTime = Date.now();
 
   container.innerHTML = '';
@@ -531,9 +532,11 @@ document.getElementById('generate-comic').addEventListener('click', async () => 
 
     loading.style.display = "none";
     controls.style.display = "none";
-    document.getElementById("refresh-comic-container").style.display = "block";
 
-    document.getElementById("refresh-comic-btn").onclick = () => location.reload();
+    refresh.style.display = "block";
+
+    // document.getElementById("refresh-comic-container").style.display = "block";
+    // document.getElementById("refresh-comic-btn").onclick = () => location.reload();
 
   } catch (error) {
     loading.style.display = "none";
