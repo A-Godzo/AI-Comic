@@ -245,9 +245,9 @@
     <button onclick="window.location.reload()" class="refresh-btn">Refresh</button>
   </div>
 
-<div id="refresh-comic-container" style="display: none; text-align: center;">
+<!-- <div id="refresh-comic-container" style="display: none; text-align: center;">
   <button class="refresh-comic-btn">Create new comic</button>
-</div>
+</div> -->
 
 
 <button id="disclosure-btn">
@@ -454,7 +454,6 @@ document.getElementById('generate-comic').addEventListener('click', async () => 
   console.log("I'm here 1");
   console.log("Genre:", selectedGenre, "Plot:", selectedPlot);
 
-  // const promptsTemplate = PROMPT_TEMPLATES[selectedGenre]?.[selectedPlot] || [FALLBACK_PROMPT];
   const prompts = PROMPT_TEMPLATES[selectedGenre]?.[selectedPlot] || [FALLBACK_PROMPT];
 
   const loading = document.getElementById("loading-screen");
@@ -504,9 +503,9 @@ document.getElementById('generate-comic').addEventListener('click', async () => 
 
     loading.style.display = "none";
     controls.style.display = "none";
-    document.getElementById("refresh-comic-container").style.display = "block";
+    // document.getElementById("refresh-comic-container").style.display = "block";
 
-    document.getElementById("refresh-comic-btn").onclick = () => location.reload();
+    // document.getElementById("refresh-comic-btn").onclick = () => location.reload();
 
   } catch (error) {
     loading.style.display = "none";
